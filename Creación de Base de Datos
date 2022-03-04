@@ -1,0 +1,141 @@
+DROP TABLE LEADS cascade constraints;
+DROP TABLE CLIENTES cascade constraints;
+DROP TABLE SERVICIOS cascade constraints;
+DROP TABLE USUARIOS cascade constraints;
+DROP TABLE ACTIVIDADES cascade constraints;
+
+
+-----------------------------------
+--AGREGAR COD NUMERICO PK
+CREATE TABLE SERVICIOS(
+    PRECIO_BASE NUMBER,
+    NOMBRE VARCHAR(20) PRIMARY KEY
+)
+INSERT INTO SERVICIOS VALUES(100, 'Publicidad');
+INSERT INTO SERVICIOS VALUES(90, 'Brand Design');
+INSERT INTO SERVICIOS VALUES(500, 'Social Media');
+SELECT * FROM USUARIOS;
+CREATE TABLE USUARIOS(
+    CONTRASE�A VARCHAR(20),
+    EMAIL VARCHAR(20) PRIMARY KEY,
+    NOMBRE VARCHAR(20),
+    APELLIDO VARCHAR(20)
+)
+INSERT INTO USUARIOS VALUES('123', 'user1@gmail.com','Luis', 'Sanchez');
+INSERT INTO USUARIOS VALUES('124', 'user2@gmail.com','Pedro', 'Mendoza');
+CREATE TABLE ACTIVIDADES(
+    EMAIL_LEAD VARCHAR(50),
+    LEAD_FECHA DATE,
+    LEAD_NOMBRE VARCHAR(20),
+    FOREIGN KEY (EMAIL_LEAD, LEAD_FECHA, LEAD_NOMBRE) REFERENCES LEADS(EMAIL, FECHA_REGISTRO, NOMBRE_SERVICIO),
+    FECHA DATE,
+    DESCRIPCION VARCHAR(500),
+    METODO VARCHAR(20),
+    TIPO VARCHAR(20),
+    ESTADO VARCHAR(20),
+    PRIMARY KEY(FECHA, TIPO, EMAIL_LEAD)
+)
+------------
+SELECT * FROM LEADS;
+SELECT * FROM USUARIOS;
+SELECT * FROM SERVICIOS;
+SELECT * FROM CLIENTES;
+SELECT * FROM ACTIVIDADES;
+-----
+--CODIFICACION
+--CONSTRAINT DE EMAIL,CORREO, SERVICIO
+--SEPARAR TABLAS DE ESTADO fk Y PRIORIDAD fk
+CREATE TABLE LEADS (
+    NOMBRE          VARCHAR2(20),
+    APELLIDO        VARCHAR(20),
+    EMAIL           VARCHAR2(50),
+    NOMBRE_SERVICIO VARCHAR2(20),
+    FOREIGN KEY(NOMBRE_SERVICIO) REFERENCES SERVICIOS(NOMBRE),
+    TELEFONO        NUMBER,
+    NOMBRE_EMPRESA  VARCHAR2(20),
+    PROCEDENCIA     VARCHAR(20),
+    FECHA_REGISTRO  DATE,
+    CARGO           VARCHAR(20),
+    USUARIO_A_CARGO VARCHAR(20),
+    Prioridad VARCHAR(20),
+    Estado VARCHAR(20),
+    FOREIGN KEY (USUARIO_A_CARGO) REFERENCES USUARIOS(EMAIL),
+    PRIMARY KEY (EMAIL, FECHA_REGISTRO, NOMBRE_SERVICIO)
+) 
+-------
+CREATE TABLE CLIENTES(
+    NOMBRE VARCHAR2(20),
+    APELLIDO VARCHAR(20),
+    EMAIL VARCHAR2(50),
+    NOMBRE_SERVICIO VARCHAR2(20),
+    TELEFONO NUMBER,
+    NOMBRE_EMPRESA VARCHAR2(20),
+    FECHA_INICIO DATE,
+    CARGO VARCHAR(20)
+)
+--PRIMERO LEAD
+INSERT INTO LEADS VALUES('Jorge', 'Diaz', 'jorge@gmail.com', 'Publicidad',999999999,'BancoTitanes' ,'Website',TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Gerente', 'user1@gmail.com','Medio','Propuesto');
+INSERT INTO LEADS VALUES('Ricardo', 'Silva', 'ricardo@gmail.com', 'Publicidad',999999999,'Adidas' ,'Website',TO_DATE('2003/09/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Supervisor de Area', 'user1@gmail.com','Alta','Realizado');
+INSERT INTO LEADS VALUES('Sebastian', 'Huerta', 'Huerta@gmail.com', 'Brand Design',999999999,'Fasion' ,'Website',TO_DATE('2003/12/03 20:00:44', 'yyyy/mm/dd hh24:mi:ss'),
+'CEO', 'user2@gmail.com','Baja','Propuesto');
+INSERT INTO LEADS VALUES('Isaac', 'Mejia', 'dicaf@gmail.com', 'Brand Design',952056311,'Dicaf' ,'Website',TO_DATE('2003/12/15 19:30:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Representante', 'user2@gmail.com','Media','Realizado');
+
+INSERT INTO LEADS VALUES('Paul', 'Guerra', 'paul@gmail.com', 'Brand Design',965784258,'Sonrisa Seria' ,'Contacto',TO_DATE('2003/12/20 19:30:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Gerente', 'user1@gmail.com','Alta','Realizado');
+INSERT INTO LEADS VALUES('Leon', 'Mejia', 'leon@gmail.com', 'Social Media',968457123,'Cite Energ�a' ,'Website',TO_DATE('2003/12/18 19:30:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Empleado', 'user1@gmail.com','Baja','Propuesto');
+INSERT INTO LEADS VALUES('Elias', 'Gonzales', 'Elias@gmail.com', 'Brand Design',785687987,'Estacion 360' ,'Website',TO_DATE('2003/12/17 19:30:44', 'yyyy/mm/dd hh24:mi:ss'),
+'CEO', 'user1@gmail.com','Media','Propuesto');
+
+INSERT INTO LEADS VALUES('Manuel', 'Trujillo', 'Manuel@gmail.com', 'Publicidad',963852741,'KMK' ,'Website',TO_DATE('2003/12/16 19:30:44', 'yyyy/mm/dd hh24:mi:ss'),
+'Supervisor', 'user2@gmail.com','Baja','Realizado');
+
+--SEGUNDO ACTIVIDAD
+INSERT INTO ACTIVIDADES VALUES ('jorge@gmail.com',TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),'Publicidad',
+TO_DATE('2003/07/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),'Apunte de requerimientos','Llamada','Lead','Realizado');
+
+--REALIZAR QUERIES delete lead
+DELETE FROM LEADS
+WHERE EMAIL LIKE 'Huerta@gmail.com%';
+select * FROM LEADS;
+select * FROM USUARIOS;
+select * FROM ACTIVIDADES;
+select * FROM CLIENTES;
+select * FROM SERVICIOS;
+
+--Eliminar Fila
+DELETE FROM LEADS
+WHERE EMAIL LIKE 'paul@gmail.com';
+--query para visualizar detalles
+SELECT * FROM LEADS
+WHERE EMAIL LIKE 'jorge@gmail.com%';
+
+--QUERY PARA ORDERNAR SEG�N EL ORDEN DE SERVICIO
+SELECT * 
+FROM LEADS
+WHERE NOMBRE_SERVICIO like 'Publicidad%';
+--QUERY PARA BUSCAR LOS LEADS CON EL CARGO GERENTE QUE PERTENEZCAN A UN USUARIO
+SELECT L.NOMBRE,L.APELLIDO,L.USUARIO_A_CARGO,L.EMAIL,L.TELEFONO,U.NOMBRE,U.APELLIDO,U.EMAIL
+FROM LEADS L, USUARIOS U
+WHERE L.USUARIO_A_CARGO=U.EMAIL
+AND L.CARGO like 'CEO%';
+--QUERY INSERT LEADS
+INSERT INTO LEADS(NOMBRE,APELLIDO,EMAIL,NOMBRE_SERVICIO,TELEFONO,NOMBRE_EMPRESA,PROCEDENCIA,FECHA_REGISTRO,CARGO,usuario_a_cargo)
+VALUES(<1>,<2>,<3>,<4>,<5>,<6>,<7>,<8>,<9>,<10>);
+--QUERY INSERT ACTIVIDAD
+SELECT * FROM ACTIVIDADES
+INSERT INTO ACTIVIDADES(EMAIL_LEAD,    LEAD_FECHA ,    LEAD_NOMBRE ,    FECHA ,
+    DESCRIPCION ,    METODO ,    TIPO ,    ESTADO) 
+    VALUES('ricardo@gmail.com',TO_DATE('2003/09/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),'Publicidad',
+    TO_DATE('2003/10/04 20:02:44', 'yyyy/mm/dd hh24:mi:ss'),'Apunte de requerimientos','Llamada','Lead','Realizado');
+--QUERY INSERT CLIENTES
+INSERT INTO CLIENTES(NOMBRE,APELLIDO,EMAIL,NOMBRE_SERVICIO,TELEFONO,NOMBRE_EMPRESA,FECHA_INICIO,CARGO)
+VALUES('Jorge', 'Diaz','jorge@gmail.com','Publicidad',999999999,'BancoTitanes',TO_DATE('2003/05/03 21:02:44', 'yyyy/mm/dd hh24:mi:ss'),'Gerente');
+
+--Query para modificar estado/Prioridad segun el cliente
+UPDATE LEADS
+SET ESTADO='Bajo'
+WHERE APELLIDO LIKE 'Diaz%';
