@@ -1,0 +1,18 @@
+db.leads.insert( {codigo:100,nombre:"Jose Galvez",empresa:"Estación 360",cod_usu:2404,cod_serv:10 });
+db.leads.insert( {codigo:101,nombre:"Vincent Mall",empresa:"Hazel",cod_usu:2405,cod_serv:20 });
+db.leads.insert( {codigo:102,nombre:"Steven Horse",empresa:"Sonrisa seria",cod_usu:2404,cod_serv:10 });
+db.leads.insert( {codigo:103,nombre:"Isaac Sisniegas",empresa:"Elvin",cod_usu:2405,cod_serv:20 });
+db.leads.insert( {codigo:104,nombre:"Mauricio Gonzales",empresa:"Calvin no Clain",cod_usu:2404,cod_serv:20 })
+//mostrar un cliente pero no el usuario que lo contacto
+db.leads.find({codigo:103},{cod_usu:0});
+//buscar el servicio de cod 20 o los que tengan serv 20 y lo maneje el usuario 2405
+db.leads.find({$or:[{cod_serv:20},{cod_usu:2405,cod_serv:20}]});
+//actualizar valores 
+db.leads.update({codigo:104},{$set:{cod_serv:30}},{multi:true});
+db.leads.find();
+//Eliminar row
+db.leads.remove({codigo:102});
+//eliminar toda la colleccion
+db.leads.remove({});
+//o tambien si deseamos eliminar todos los documentos de una colección
+db.leads.drop();
